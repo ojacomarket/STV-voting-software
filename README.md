@@ -11,8 +11,9 @@
 
 ### :key: What do I need to run the software
 > Any C compiler (to simplify, use GCC for Unix-like and MinGw for Microsoft)
+</br>
 
-## R u n
+## :running: R u n
 
 ### :one: Clone *main* branch 
 
