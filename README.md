@@ -40,7 +40,7 @@ gcc -o run.exe program.o utilities.o declarations.h
 ## :trollface: V u l n e r a b i l i t i e s
 
 </br>
-<div color="grey">
+<div style="color:grey">
 - [x] ***Usage of static arrays (we cannot dynamically expand boundaries and only restricted to the precise amount of people who vote and candidates who ballotate)***
 </div>
 </br>
