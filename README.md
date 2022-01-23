@@ -15,6 +15,8 @@
 
 ## :running: R u n
 
+</br>
+
 ### :one: Clone *main* branch 
 
 ### :two: Type into terminal (only Unix-like, for Microsoft, please, lookup in the web):
@@ -29,7 +31,11 @@ gcc program.o utilities.o declarations.h
 
 ### :three: You will be prompted to input values (more detailed usage prescriptions are shown on running time)
 
-## V u l n e r a b i l i t i e s
+</br>
+
+## :trollface: V u l n e r a b i l i t i e s
+
+</br>
 
 - [x] Usage of static arrays (we cannot dynamically expand boundaries and only restricted to the precise amount of people who vote and candidates who ballotate)
 - [x] Usage of unstandartizied variable data types (int, char, etc). Each compiler can interpret them in a slightly different way
