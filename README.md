@@ -29,5 +29,5 @@ gcc program.o utilities.o declarations.h
 
 ## V u l n e r a b i l i t i e s
 
-### :fire: Usage of static arrays (we cannot dynamically expand boundaries and only restricted to the precise amount of people who vote and candidates who ballotate)
-### :fire: Usage of unstandartizied variable data types (int, char, etc). Each compiler can interpret them in a slightly different way
+- [x] ### :fire: Usage of static arrays (we cannot dynamically expand boundaries and only restricted to the precise amount of people who vote and candidates who ballotate)
+- [x] ### :fire: Usage of unstandartizied variable data types (int, char, etc). Each compiler can interpret them in a slightly different way
