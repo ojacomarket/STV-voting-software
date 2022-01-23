@@ -1,6 +1,10 @@
 # STV Voting Software
 
-## I n t r o d u c t i o n
+## :bulb: I n t r o d u c t i o n
+<pre>
+
+
+</pre>
 
 ### :question: What is it
 > STV Voting System is a system of voting :sweat_smile:, when you are asked to fill in ballots not only with one single preferable candidate, but also order your preferences, starting with the top (most likely to choose). By doing latter, we give a chance for other ("weaker") candidates to be elected
@@ -29,5 +33,5 @@ gcc program.o utilities.o declarations.h
 
 ## V u l n e r a b i l i t i e s
 
- ### - [x] :fire: Usage of static arrays (we cannot dynamically expand boundaries and only restricted to the precise amount of people who vote and candidates who ballotate)
- ### - [x] :fire: Usage of unstandartizied variable data types (int, char, etc). Each compiler can interpret them in a slightly different way
+- [x] Usage of static arrays (we cannot dynamically expand boundaries and only restricted to the precise amount of people who vote and candidates who ballotate)
+- [x] Usage of unstandartizied variable data types (int, char, etc). Each compiler can interpret them in a slightly different way
