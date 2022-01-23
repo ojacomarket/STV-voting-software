@@ -41,8 +41,10 @@ gcc -o run.exe program.o utilities.o declarations.h
 
 </br>
 
-- [x] ***Usage of static arrays (we cannot dynamically expand boundaries and only restricted to the precise amount of people who vote and candidates who ballotate)***
+```diff
+- [x] #***Usage of static arrays (we cannot dynamically expand boundaries and only restricted to the precise amount of people who vote and candidates who ballotate)***
 
 </br>
 
-- [x] ***Usage of unstandartizied variable data types (int, char, etc). Each compiler can interpret them in a slightly different way***
+- [x] #***Usage of unstandartizied variable data types (int, char, etc). Each compiler can interpret them in a slightly different way***
+```
