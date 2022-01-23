@@ -20,7 +20,6 @@ int main() {
     init_char_array(voting_results_candidates_hierarchy, RIIGIKOGU_LIIKMED * 3, 63);
     init_2d_char_array(buffer, RIIGIKOGU_LIIKMED * 3, 63);
 
-
     /************************ Greet user at the beginning ************************/
     greeting();
 
@@ -34,20 +33,13 @@ int main() {
      * "score_per_vote" and "votes_per_candidate" ************************/
     create_vote_tables(buffer, votes_per_candidate, score_per_vote, total_ballots, total_candidates);
 
-    /*  printf("Total %d Mandates %d Droop %d Votes in total %d\n", total_candidates, available_mandates, droop_quota,
-             total_ballots);
-  */
-
     for (int i = 0; i < total_candidates; i++) {
-         printf("Value of votes is %d\n", votes_per_candidate[i]);
-     }
-     for (int i = 0; i < total_candidates; i++) {
-         printf("Power of votes is %d\n", score_per_vote[i]);
-     }
+        printf("Value of votes is %d\n", votes_per_candidate[i]);
+    }
+    for (int i = 0; i < total_candidates; i++) {
+        printf("Power of votes is %d\n", score_per_vote[i]);
+    }
     printf("\n\n");
-
-    /*  printf("Max of amount is at location of %d\n", find_max(votes_per_candidate, total_candidates));
-      printf("Max of points is at location of %d\n", find_max(score_per_vote, total_candidates));*/
 
     /************************ Sort two tables (result of "create_vote_tables") in ascending order ************************/
     parallel_sort(voting_results_candidates_hierarchy, votes_per_candidate, score_per_vote, total_candidates);
@@ -63,30 +55,17 @@ int main() {
         printf("Power of votes is %d\n", score_per_vote[i]);
     }
 
-
+    /************************ Save initial values of votes, but use copied array to future process ************************/
     copy_int_array(votes_per_candidate, votes_per_candidate_before_droop, total_candidates);
 
     /************************ Parse two tables (result of "parallel_sort"), based on Droop quota
      * assign available mandates ************************/
     assign_mandates(votes_per_candidate, available_mandates, total_candidates, droop_quota);
 
-    /************************ Fancy terminal output of STV votes ************************/
+    /************************ Print to terminal results of voting in a fancy way ************************/
+    print_fancy(total_candidates, available_mandates, votes_per_candidate_before_droop,
+                voting_results_candidates_hierarchy, droop_quota);
 
-
-    printf("\n\n\n");
-    printf("\n\n\t\t\tVOTING RESULTS\n\n");
-    print_fancy(total_candidates, available_mandates, votes_per_candidate_before_droop, voting_results_candidates_hierarchy, droop_quota);
-   /* for (int i = 0; i < available_mandates; i++) {
-        printf("Value of votes is %d\n", votes_per_candidate[i]);
-        if (i == 0) {
-            printf("Mandate received %c\n", voting_results_candidates_hierarchy[i]);
-        } else {
-            printf("Mandate received %c\n", voting_results_candidates_hierarchy[i * 3]);
-        }
-    }
-    for (int i = 0; i < total_candidates; i++) {
-        printf("Power of votes is %d\n", score_per_vote[i]);
-    }*/
     return 1;
 }
 

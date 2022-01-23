@@ -15,9 +15,6 @@ int parse_data_return_droop(char buffer[ELANIKE_ARV][RIIGIKOGU_LIIKMED * 3], int
     while (*total_candidates < 1) { // ask for candidates input, until at least is submitted
         printf("\n[###....... 30%] input your candidates: ");
         fgets(buffer[0], (RIIGIKOGU_LIIKMED * 3), stdin);
-        /*for (int i = 0; i < 10; ++i) {
-            printf("Current inside a buffer %c\n", buffer[0][i]);
-        }*/
         *total_candidates = check_data_validity(buffer[0], (RIIGIKOGU_LIIKMED * 3));
     }
     printf("\n[OK]\n");
@@ -41,10 +38,6 @@ int parse_data_return_droop(char buffer[ELANIKE_ARV][RIIGIKOGU_LIIKMED * 3], int
         printf("\n[#########. 90%] input your votes (to exit press 'Enter' on a new line): ");
         fgets(buffer[votes_buffer_index], (RIIGIKOGU_LIIKMED * 3), stdin);
         int vote = check_data_validity(buffer[votes_buffer_index], (RIIGIKOGU_LIIKMED * 3));
-        /*for (int i = 0; i < RIIGIKOGU_LIIKMED * 3; ++i) {
-            printf("ELEMENT FROM BALLOT: %s\n", buffer[votes_buffer_index]);
-            printf("\nELEMENT FROM SOURCE: %s\n", buffer[0]);
-        }*/
         if (!find_absence(buffer[0], buffer[votes_buffer_index], *total_candidates, vote) && vote > -1) {
             printf("\n[ERROR] unregistered candidate...\n");
             continue;
@@ -155,104 +148,104 @@ create_vote_tables(char buffer[ELANIKE_ARV][RIIGIKOGU_LIIKMED * 3], int votes_pe
  * @param size size of integer array (both "array1" and "array2" should be equal in size)
  */
 void parallel_sort(char candidate_results[RIIGIKOGU_LIIKMED * 3], int *array1, int *array2, int size) {
-    int max_from_1 = 0;
-    int max_from_2 = 0;
-    int tmp;
-    char tmp_letter;
 
+    int max_from_1 = 0; // variable, stores index of maximum value from "array1"
+    int max_from_2 = 0; // variable, stores index of maximum value from "array2"
+    int tmp; // variable, stores previous value of the whatever "int" array
+    char tmp_letter; // variable, stores previous char of "candidate_results" array
 
+    /************************ Don't change initial arrays, make copies and operate on them ************************/
     int copy_array1[size];
     copy_int_array(array1, copy_array1, size);
     int copy_array2[size];
     copy_int_array(array2, copy_array2, size);
 
 
+    /************************ Loop throughout all available candidates ************************/
+
     for (int i = 0; i < size; ++i) {
 
-        max_from_1 = find_max(copy_array1, size);
-        max_from_2 = find_max(copy_array2, size);
+        max_from_1 = find_max(copy_array1, size); // index of maximum value found in "array1"
+        max_from_2 = find_max(copy_array2, size); // index of maximum value found in "array2"
 
+        /************************ If value from "array1" is ultimately maximum OR at least maximum in "array1" ************************/
         if (max_from_1 == max_from_2 || array1[max_from_1] > array1[max_from_2]) {
-            copy_array1[max_from_1] = -1;
-           // copy_array2[max_from_2] = -1;
-           copy_array2[max_from_1] = -1;
-            /* printf("\nCopy array 1:\n");
-             for (int j = 0; j < size; ++j) {
-                 printf("%d\t", copy_array1[j]);
-             }
-             printf("\nReal array 1:\n");
-             for (int j = 0; j < size; ++j) {
-                 printf("%d\t", array1[j]);
-             }
-             printf("\nCopy array 2:\n");
-             for (int j = 0; j < size; ++j) {
-                 printf("%d\t", copy_array2[j]);
-             }
-             printf("\nReal array 2:\n");
-             for (int j = 0; j < size; ++j) {
-                 printf("%d\t", array2[j]);
-             }*/
 
+            copy_array1[max_from_1] = -1; // set -1 to index of maximum value to prevent it to be maximum next iteration
+            copy_array2[max_from_1] = -1; // set -1 to index of maximum value to prevent it to be maximum next iteration
+
+            /************************ Change int values inside the real array of voting amount ************************/
             tmp = array1[i];
             array1[i] = array1[max_from_1];
             array1[max_from_1] = tmp;
 
-
+            /************************ Change char values inside the array of candidates ************************/
             tmp_letter = candidate_results[i * 3];
             candidate_results[i * 3] = candidate_results[max_from_1 * 3];
             candidate_results[max_from_1 * 3] = tmp_letter;
 
+            /************************ If value is ultimately maximum ************************/
             if (max_from_1 == max_from_2) {
+
+                /************************ Shift int value in real array of voting scores ************************/
                 tmp = array2[i];
                 array2[i] = array2[max_from_2];
                 array2[max_from_2] = tmp;
 
+                /************************ Shift int value in copied array of voting scores ************************/
                 tmp = copy_array2[i];
                 copy_array2[i] = copy_array2[max_from_2];
                 copy_array2[max_from_2] = tmp;
-            } else {
+            }
+                /************************ If value is bigger inside only "array1" ************************/
+            else {
+
+                /************************ Shift int value in real array of voting scores ************************/
                 tmp = array2[i];
                 array2[i] = array2[max_from_1];
                 array2[max_from_1] = tmp;
 
+                /************************ Shift int value in copied array of voting scores ************************/
                 tmp = copy_array2[i];
                 copy_array2[i] = copy_array2[max_from_1];
                 copy_array2[max_from_1] = tmp;
             }
+
+            /************************ Change int values inside the copied array of voting amount ************************/
             tmp = copy_array1[i];
             copy_array1[i] = copy_array1[max_from_1];
             copy_array1[max_from_1] = tmp;
 
-
-            /*tmp = copy_array2[i];
-            copy_array2[i] = copy_array2[max_from_2];
-            copy_array2[max_from_2] = tmp;*/
-        } else {
-            //  if (array1[max_from_1] == array1[max_from_2]) {
+        }
+            /************************ If value from "array1" is less than value from "array1" at index of (maximum from "array2") ************************/
+        else {
             copy_array1[max_from_2] = -1;
             copy_array2[max_from_2] = -1;
 
+            /************************ Change int values inside the array of voting amount ************************/
             tmp = array1[i];
             array1[i] = array1[max_from_2];
             array1[max_from_2] = tmp;
 
-
+            /************************ Change char values inside the array of candidates ************************/
             tmp_letter = candidate_results[i * 3];
             candidate_results[i * 3] = candidate_results[max_from_2 * 3];
             candidate_results[max_from_2 * 3] = tmp_letter;
 
+            /************************ Change int values inside the array of voting scores ************************/
             tmp = array2[i];
             array2[i] = array2[max_from_2];
             array2[max_from_2] = tmp;
 
+            /************************ Change int values inside the copied array of voting amount ************************/
             tmp = copy_array1[i];
             copy_array1[i] = copy_array1[max_from_2];
             copy_array1[max_from_2] = tmp;
 
+            /************************ Change int values inside the copied array of voting scores ************************/
             tmp = copy_array2[i];
             copy_array2[i] = copy_array2[max_from_2];
             copy_array2[max_from_2] = tmp;
-            // }
         }
     }
 }
@@ -291,65 +284,31 @@ void copy_int_array(const int *array, int *copy, int size) {
  * @param droop Droop quota
  */
 void assign_mandates(int votes_per_candidate[RIIGIKOGU_LIIKMED], int mandates_given, int candidates, int droop) {
-    int extra_votes = 0;
-    int redundant_candidates = candidates - mandates_given;
 
-    //if (redundant_candidates >= 0) {
+    int extra_votes = 0; // droop and votes amount per candidate ratio (+/-)
+    int redundant_candidates = candidates - mandates_given; // not all politics will be elected
+
+    /************************ If candidates > than mandates, then loop on mandates, otherwise on candidates ************************/
     for (int i = 1; i <= (redundant_candidates >= 0 ? mandates_given : candidates); ++i) {
-        extra_votes = droop - votes_per_candidate[i - 1];
-        if (extra_votes > 0) {
-            int abi = 0;
-            while (extra_votes > 0 && votes_per_candidate[i - 1] != droop) {
-                votes_per_candidate[i - 1] += votes_per_candidate[mandates_given - abi];
-                votes_per_candidate[(mandates_given - abi)] = 0;
-                extra_votes--;
-                abi++;
-            }
-        } else {
+        extra_votes = droop - votes_per_candidate[i -
+                                                  1]; // if negative = potential candidate for mandate!, if pos. = cannot proceed forward voting
+        if (extra_votes >
+            0) { // if candidate didn't overcome quota, then its votes will be charged to most dominant candidate
+            int counter = 0; // helper, to be able to loop back and forth throughout array elements
 
-            votes_per_candidate[i - 1] = droop;
+            /************************ Loop until all redundant votes are assigned to most dominant candidate ************************/
+            while (extra_votes > 0 && votes_per_candidate[i - 1] != droop) {
+                votes_per_candidate[i - 1] += votes_per_candidate[mandates_given - counter];
+                votes_per_candidate[(mandates_given - counter)] = 0;
+                extra_votes--;
+                counter++;
+            }
+        } else { // if candidate overcame quota, it potentially "can have" a mandate
+            votes_per_candidate[i -
+                                1] = droop; // all left votes will be charged to next "less dominant" candidate (next to most one)
             votes_per_candidate[i] += abs(extra_votes);
         }
     }
-    /* } else if (redundant_candidates < 0) {
-         for (int i = 1; i <= candidates; ++i) {
-             extra_votes = droop - votes_per_candidate[i - 1];
-             if (extra_votes > 0) {
-                 while (extra_votes > 0) {
-                     votes_per_candidate[i - 1] += votes_per_candidate[candidates - i];
-                     votes_per_candidate[(candidates - i)] = 0;
-                     extra_votes--;
-                 }
-             } else {
-
-                 votes_per_candidate[i - 1] = droop;
-                 votes_per_candidate[i] += abs(extra_votes);
-             }
-         }
-     }*/
-
-
-    /* else { // if mandates are less than politics, which candidate
-         for (int i = 1; i <= mandates_given; ++i) {
-             while (redundant_candidates) {
-                 votes_per_candidate[0] += votes_per_candidate[(mandates_given - i)]; // was -2
-                 votes_per_candidate[(mandates_given - i)] = 0;
-                 redundant_candidates--;
-             }
-             extra_votes = droop - votes_per_candidate[i - 1];
-             if (extra_votes > 0) {
-                 while (extra_votes > 0) {
-                     votes_per_candidate[i - 1] += votes_per_candidate[mandates_given - i];
-                     votes_per_candidate[(mandates_given - i)] = 0;
-                     extra_votes--;
-                 }
-             } else {
-
-                 votes_per_candidate[i - 1] = droop;
-                 votes_per_candidate[i] += abs(extra_votes);
-             }
-         }
-     }*/
 }
 
 /**
@@ -407,7 +366,6 @@ int find_absence(const char *search_from, const char *sample, int size, int vote
                 if (sample[j * 3] == search_from[k * 3]) { // if equal symbols
                     found++;
                     valid++;
-                    // break;
                 }
             } else
                 break;
@@ -453,11 +411,16 @@ void init_2d_char_array(char array_2D[ELANIKE_ARV][RIIGIKOGU_LIIKMED * 3], int s
  */
 void print_fancy(int total_candidates, int available_mandates, const int *votes_per_candidate,
                  char *voting_results_candidates_hierarchy, int droop) {
+
+    printf("\n\n\n");
+    printf("\n\n\t\t\tVOTING RESULTS\n\n");
+
     printf("\n\tS u m m a r y:\n\n");
     printf("\t(Droop quota): ");
     for (int i = 0; i < droop; ++i) {
         printf("X");
     }
+
     printf("\n\n\t(Available mandates): %d\n\n\n", available_mandates);
     for (int i = 0; i < total_candidates; i++) {
 
