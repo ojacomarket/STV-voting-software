@@ -25,7 +25,11 @@ gcc -c program.c utilities.c declarations.h
 ```
 **Enter**
 ```
-gcc program.o utilities.o declarations.h
+gcc -o run.exe program.o utilities.o declarations.h
+```
+**Enter**
+```
+./run.exe
 ```
 **Enter**
 
