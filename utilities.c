@@ -3,7 +3,7 @@
 int parse_data_from_console(char buffer[CITIZENS][POLITICS * 3], int *total_candidates, int *mandates_given,
                             int *total_votes) {
 
-    /************************ Init char array with ASCII symbol 63 = "?" ************************/
+    /************************ Init 2D char array with ASCII symbol 63 = "?" ************************/
     init_2d_char_array(buffer, POLITICS * 3, 63);
 
     /************************ Loop until valid characters are inserted (UPPERCASE LETTER, ...) ************************/
@@ -19,7 +19,7 @@ int parse_data_from_console(char buffer[CITIZENS][POLITICS * 3], int *total_cand
         printf("\n[######.... 60%] input number of mandates to be given: ");
         fgets(buffer[1], 10, stdin);
         *mandates_given = atoi(buffer[1]);
-        if (*mandates_given > 0 && *mandates_given < 102) {
+        if (*mandates_given > 0 && *mandates_given < (POLITICS + 1)) {
             break;
         } else
             printf("\n[ERROR] invalid input ::: only numbers in the range of 1 to 101 are allowed...\n");
@@ -94,7 +94,7 @@ int check_data_validity(const char *array, int size, int votes_given) {
                 }
             } else if (array[i] == 10) { // if enter is met
                 if (total_candidates < 1) {
-                    if (!votes_given) {
+                    if (!votes_given) { // if you haven't voted yet, then we assume it is empty input, rather than submission
                         printf("\n[ERROR] no data was input...\n");
                         return -2;
                     }
@@ -122,13 +122,7 @@ create_vote_tables_sort_desc(char buffer[CITIZENS][POLITICS * 3], char candidate
     /************************ Copy candidates list to unhierarchied array of voting results ************************/
     strcpy(candidate_results, buffer[0]);
 
-    for (int j, i = 0; i < candidates; ++i, ++j) {
-        printf("POSITION IS %d\n", i);
-        for (int k = 0; k < candidates; ++k) {
-            printf("Buffer inside %c\n", buffer[i + 2][k * 3]);
-        }
-
-    }
+    /************************ Create 2 tables ************************/
     for (int i = 0; i < votes; i++) { // we need to iterate over each vote and get data from there
         for (int j = 0; j < candidates; j++) { // we assign amount of votes made and points given per each candidate
             for (int k = 0; k <
@@ -144,7 +138,7 @@ create_vote_tables_sort_desc(char buffer[CITIZENS][POLITICS * 3], char candidate
             }
         }
     }
-    /************************ Sort two tables (result of "create_vote_tables_sort_desc") in ascending order ************************/
+    /************************ Sort two tables in ascending order ************************/
     parallel_sort(candidate_results, votes_per_candidate, score_per_vote, candidates);
 }
 
