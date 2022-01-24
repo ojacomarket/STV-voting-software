@@ -1,4 +1,4 @@
-#include "declarations.h"
+#include "stvlib.h"
 
 /**
  * Parse data from a user and calculate Droop quota
@@ -35,6 +35,8 @@ int parse_data_return_droop(char buffer[ELANIKE_ARV][RIIGIKOGU_LIIKMED * 3], int
 
     /************************ Loop until valid characters are inserted (UPPERCASE LETTER, ...) ************************/
     while (1) { // ask for voting ballots, until Enter on an empty line is pressed
+        if (*total_votes == ELANIKE_ARV)
+            break;
         printf("\n[#########. 90%] input your votes (to exit press 'Enter' on a new line): ");
         fgets(buffer[votes_buffer_index], (RIIGIKOGU_LIIKMED * 3), stdin);
         int vote = check_data_validity(buffer[votes_buffer_index], (RIIGIKOGU_LIIKMED * 3));
