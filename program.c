@@ -28,10 +28,14 @@ int main() {
 
     /************************ Copy candidates list to unhierarchied array of voting results ************************/
     strcpy(voting_results_candidates_hierarchy, buffer[0]);
-
     /************************ Based on ballots and candidate amount, fills two tables:
      * "score_per_vote" and "votes_per_candidate" ************************/
     create_vote_tables(buffer, votes_per_candidate, score_per_vote, total_ballots, total_candidates);
+    /*for (int i = 0; i < total_candidates; ++i) {
+        printf("VOTES inside %d\n", votes_per_candidate[i]);
+        printf("SCORE inside %d\n", score_per_vote[i]);
+    }*/
+    printf("\n\n");
 
     /************************ Sort two tables (result of "create_vote_tables") in ascending order ************************/
     parallel_sort(voting_results_candidates_hierarchy, votes_per_candidate, score_per_vote, total_candidates);

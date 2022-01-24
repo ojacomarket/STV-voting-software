@@ -40,16 +40,20 @@ int parse_data_return_droop(char buffer[ELANIKE_ARV][RIIGIKOGU_LIIKMED * 3], int
         int vote = check_data_validity(buffer[votes_buffer_index], (RIIGIKOGU_LIIKMED * 3));
         if (!find_absence(buffer[0], buffer[votes_buffer_index], *total_candidates, vote) && vote > -1) {
             printf("\n[ERROR] unregistered candidate...\n");
+            init_char_array(buffer[votes_buffer_index], RIIGIKOGU_LIIKMED * 3, 63);
             continue;
         }
-        if (!vote) // invalid vote ? Continue to ask
+        if (!vote) {// invalid vote ? Continue to ask
+            init_char_array(buffer[votes_buffer_index], RIIGIKOGU_LIIKMED * 3, 63);
             continue;
+        }
         else if (vote == -1) // enter is pressed and data is correct ? Exit loop of asking
             break;
-        else // votes are still coming ? Continue to count them
+        else {// votes are still coming ? Continue to count them
             *total_votes += 1;
-        printf("\n[OK]\n");
-        votes_buffer_index++;
+            printf("\n[OK]\n");
+            votes_buffer_index++;
+        }
     }
 
     return (*total_votes / ((*total_candidates) + 1)) + 1; // droop quota equation
@@ -75,6 +79,10 @@ int check_data_validity(const char *array, int size) {
                 printf("\n[ERROR] invalid input ::: use UPPERCASE LETTER, UPPERCASE LETTER, ...\n");
                 return 0;
             } else if (array[i] > 64 && array[i] < 91) { // if found ASCII for A to Z letters
+                if (!find_duplicates_in_string(array, insertions)) {
+                    printf("\n[ERROR] no duplicate candidates allowed...\n");
+                    return 0;
+                }
                 valid_element++;
                 total_candidates++;
             } else if (array[i] == 44) { // if coma is found
@@ -99,10 +107,10 @@ int check_data_validity(const char *array, int size) {
                     printf("\n[ERROR] no data was input...\n");
                     return -1;
                 }
-                if (!find_duplicates_in_string(array, insertions)) {
+               /* if (!find_duplicates_in_string(array, insertions)) {
                     printf("\n[ERROR] no duplicate candidates allowed...\n");
                     return 0;
-                }
+                }*/
                 break;
             }
         } else {
@@ -125,15 +133,23 @@ void
 create_vote_tables(char buffer[ELANIKE_ARV][RIIGIKOGU_LIIKMED * 3], int votes_per_candidate[RIIGIKOGU_LIIKMED],
                    int score_per_vote[RIIGIKOGU_LIIKMED],
                    int votes, int candidates) {
+    for (int j,i = 0; i < candidates; ++i,++j) {
+        printf("POSITION IS %d\n", i);
+        for (int k = 0; k < candidates; ++k) {
+            printf("Buffer inside %c\n", buffer[i + 2][k*3]);
+        }
 
+    }
     for (int i = 0; i < votes; i++) { // we need to iterate over each vote and get data from there
         for (int j = 0; j < candidates; j++) { // we assign amount of votes made and points given per each candidate
             for (int k = 0; k <
-                            candidates; k++) { // fix string of candidates and parse strings of votes by people to find similarities
+            candidates; k++) {// fix string of candidates and parse strings of votes by people to find similarities
                 if (buffer[0][j * 3] == buffer[2 + i][k * 3]) { // if candidate is found in a single vote
+                    printf("\n CANDIDATES %c\n", buffer[0][j*3]);
+                    printf("\n BUFFER %c\n", buffer[i + 2][k*3]);
                     votes_per_candidate[j]++; // add +1, which indicates, that that particular candidate has been chosen
-                    score_per_vote[j] += (candidates -
-                                          k); // points, that each candidate is given by each vote is assigned with respect to candidate name position in a vote
+                    score_per_vote[j] += (candidates - k); // points, that each candidate is given by each vote is assigned with respect to candidate name position in a vote
+
                 }
             }
         }
@@ -422,7 +438,7 @@ void print_fancy(int total_candidates, int available_mandates, const int *votes_
         for (int j = 0; j < votes_per_candidate[i]; ++j) {
             printf("X");
         }
-        printf("\t\t\t(Total score: %d)", score_per_vote[i]);
+        printf("\t\t\t(Candidate preferences score: %d)", score_per_vote[i]);
         printf("\n\n");
     }
     printf("\n\n\t\t\tFINAL VOTING RESULTS\n\n");
