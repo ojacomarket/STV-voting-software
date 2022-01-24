@@ -1,21 +1,16 @@
 #include "stvlib.h"
 
-/**
- * Parse data from a user and calculate Droop quota
- * @param buffer char 2D array, that will store user input (each input as single string)
- * @param total_candidates pointer to integer, that will store amount of voting candidates
- * @param mandates_given pointer to integer, that will store amount of mandates
- * @param total_votes pointer to integer, that will store amount of votes, that people made for candidates
- * @return [int]: Droop quota
- */
-int parse_data_return_droop(char buffer[ELANIKE_ARV][RIIGIKOGU_LIIKMED * 3], int *total_candidates, int *mandates_given,
+int parse_data_from_console(char buffer[CITIZENS][POLITICS * 3], int *total_candidates, int *mandates_given,
                             int *total_votes) {
+
+    /************************ Init char array with ASCII symbol 63 = "?" ************************/
+    init_2d_char_array(buffer, POLITICS * 3, 63);
 
     /************************ Loop until valid characters are inserted (UPPERCASE LETTER, ...) ************************/
     while (*total_candidates < 1) { // ask for candidates input, until at least is submitted
         printf("\n[###....... 30%] input your candidates: ");
-        fgets(buffer[0], (RIIGIKOGU_LIIKMED * 3), stdin);
-        *total_candidates = check_data_validity(buffer[0], (RIIGIKOGU_LIIKMED * 3));
+        fgets(buffer[0], (POLITICS * 3), stdin);
+        *total_candidates = check_data_validity(buffer[0], (POLITICS * 3));
     }
     printf("\n[OK]\n");
 
@@ -35,21 +30,20 @@ int parse_data_return_droop(char buffer[ELANIKE_ARV][RIIGIKOGU_LIIKMED * 3], int
 
     /************************ Loop until valid characters are inserted (UPPERCASE LETTER, ...) ************************/
     while (1) { // ask for voting ballots, until Enter on an empty line is pressed
-        if (*total_votes == ELANIKE_ARV)
+        if (*total_votes == CITIZENS)
             break;
         printf("\n[#########. 90%] input your votes (to exit press 'Enter' on a new line): ");
-        fgets(buffer[votes_buffer_index], (RIIGIKOGU_LIIKMED * 3), stdin);
-        int vote = check_data_validity(buffer[votes_buffer_index], (RIIGIKOGU_LIIKMED * 3));
+        fgets(buffer[votes_buffer_index], (POLITICS * 3), stdin);
+        int vote = check_data_validity(buffer[votes_buffer_index], (POLITICS * 3));
         if (!find_absence(buffer[0], buffer[votes_buffer_index], *total_candidates, vote) && vote > -1) {
             printf("\n[ERROR] unregistered candidate...\n");
-            init_char_array(buffer[votes_buffer_index], RIIGIKOGU_LIIKMED * 3, 63);
+            init_char_array(buffer[votes_buffer_index], POLITICS * 3, 63);
             continue;
         }
         if (!vote) {// invalid vote ? Continue to ask
-            init_char_array(buffer[votes_buffer_index], RIIGIKOGU_LIIKMED * 3, 63);
+            init_char_array(buffer[votes_buffer_index], POLITICS * 3, 63);
             continue;
-        }
-        else if (vote == -1) // enter is pressed and data is correct ? Exit loop of asking
+        } else if (vote == -1) // enter is pressed and data is correct ? Exit loop of asking
             break;
         else {// votes are still coming ? Continue to count them
             *total_votes += 1;
@@ -61,12 +55,6 @@ int parse_data_return_droop(char buffer[ELANIKE_ARV][RIIGIKOGU_LIIKMED * 3], int
     return (*total_votes / ((*total_candidates) + 1)) + 1; // droop quota equation
 }
 
-/**
-* Check string to be applicable for STV voting system
-* @param array string
-* @param size size of string
-* @return [-1]: if no input, [0]: if data is invalid, [1]: if data is valid
-*/
 int check_data_validity(const char *array, int size) {
 
     int total_candidates = 0; // counter for politicans to be voted for
@@ -109,10 +97,10 @@ int check_data_validity(const char *array, int size) {
                     printf("\n[ERROR] no data was input...\n");
                     return -1;
                 }
-               /* if (!find_duplicates_in_string(array, insertions)) {
-                    printf("\n[ERROR] no duplicate candidates allowed...\n");
-                    return 0;
-                }*/
+                /* if (!find_duplicates_in_string(array, insertions)) {
+                     printf("\n[ERROR] no duplicate candidates allowed...\n");
+                     return 0;
+                 }*/
                 break;
             }
         } else {
@@ -123,49 +111,44 @@ int check_data_validity(const char *array, int size) {
     return total_candidates;
 }
 
-/**
- * Create two tables: one that will store how many people have chosen each candidate and another - points for each choice
- * @param buffer 2D array that store all user input data
- * @param votes_per_candidate integer array, that will store amount of votes for each candidate
- * @param score_per_vote integer array, that will store amount of points for each candidate (each vote has different points)
- * @param votes how many votes been made by people in total
- * @param candidates how many ballot candidates we have
- */
 void
-create_vote_tables(char buffer[ELANIKE_ARV][RIIGIKOGU_LIIKMED * 3], int votes_per_candidate[RIIGIKOGU_LIIKMED],
-                   int score_per_vote[RIIGIKOGU_LIIKMED],
-                   int votes, int candidates) {
-    for (int j,i = 0; i < candidates; ++i,++j) {
+create_vote_tables_sort_desc(char buffer[CITIZENS][POLITICS * 3], char candidate_results[POLITICS * 3],
+                             int votes_per_candidate[POLITICS],
+                             int score_per_vote[POLITICS],
+                             int votes, int candidates) {
+    /************************ Init char arrays with ASCII symbol 63 = "?" ************************/
+    init_char_array(candidate_results, POLITICS * 3, 63);
+
+    /************************ Copy candidates list to unhierarchied array of voting results ************************/
+    strcpy(candidate_results, buffer[0]);
+
+    for (int j, i = 0; i < candidates; ++i, ++j) {
         printf("POSITION IS %d\n", i);
         for (int k = 0; k < candidates; ++k) {
-            printf("Buffer inside %c\n", buffer[i + 2][k*3]);
+            printf("Buffer inside %c\n", buffer[i + 2][k * 3]);
         }
 
     }
     for (int i = 0; i < votes; i++) { // we need to iterate over each vote and get data from there
         for (int j = 0; j < candidates; j++) { // we assign amount of votes made and points given per each candidate
             for (int k = 0; k <
-            candidates; k++) {// fix string of candidates and parse strings of votes by people to find similarities
+                            candidates; k++) {// fix string of candidates and parse strings of votes by people to find similarities
                 if (buffer[0][j * 3] == buffer[2 + i][k * 3]) { // if candidate is found in a single vote
-                    printf("\n CANDIDATES %c\n", buffer[0][j*3]);
-                    printf("\n BUFFER %c\n", buffer[i + 2][k*3]);
+                    printf("\n CANDIDATES %c\n", buffer[0][j * 3]);
+                    printf("\n BUFFER %c\n", buffer[i + 2][k * 3]);
                     votes_per_candidate[j]++; // add +1, which indicates, that that particular candidate has been chosen
-                    score_per_vote[j] += (candidates - k); // points, that each candidate is given by each vote is assigned with respect to candidate name position in a vote
+                    score_per_vote[j] += (candidates -
+                                          k); // points, that each candidate is given by each vote is assigned with respect to candidate name position in a vote
 
                 }
             }
         }
     }
+    /************************ Sort two tables (result of "create_vote_tables_sort_desc") in ascending order ************************/
+    parallel_sort(candidate_results, votes_per_candidate, score_per_vote, candidates);
 }
 
-/**
- * Sort two integer and one candidate arrays respectively in descending order
- * @param candidate_results array of candidate names (1 symbol per name)
- * @param array1 integer array, that represent votes per candidate
- * @param array2 integer array, that represent score per single vote
- * @param size size of integer array (both "array1" and "array2" should be equal in size)
- */
-void parallel_sort(char candidate_results[RIIGIKOGU_LIIKMED * 3], int *array1, int *array2, int size) {
+void parallel_sort(char candidate_results[POLITICS * 3], int *array1, int *array2, int size) {
 
     int max_from_1 = 0; // variable, stores index of maximum value from "array1"
     int max_from_2 = 0; // variable, stores index of maximum value from "array2"
@@ -268,12 +251,6 @@ void parallel_sort(char candidate_results[RIIGIKOGU_LIIKMED * 3], int *array1, i
     }
 }
 
-/**
- * Find maximum value inside an array of integers
- * @param array array of integers
- * @param size size of the array
- * @return index of maximum value found inside the array
- */
 int find_max(const int *array, int size) {
     int index_of_max = 0;
     for (int i = 1; i < size; ++i) {
@@ -282,26 +259,13 @@ int find_max(const int *array, int size) {
     return index_of_max;
 }
 
-/**
- * Copy one integer array values into another integer array
- * @param array integer array of values to be copied from
- * @param copy integer array to copy values into
- * @param size size of both arrays should be the same
- */
-void copy_int_array(const int *array, int *copy, int size) {
+void copy_int_array(const int *src, int *dest, int size) {
     for (int i = 0; i < size; ++i) {
-        copy[i] = array[i];
+        dest[i] = src[i];
     }
 }
 
-/**
- * Leave only those candidates, which passed Droop quota and has available mandate left
- * @param votes_per_candidate integer array of votes per single candidate
- * @param mandates_given how many available mandates we have
- * @param candidates total amount of available for voting candidates
- * @param droop Droop quota
- */
-void assign_mandates(int votes_per_candidate[RIIGIKOGU_LIIKMED], int mandates_given, int candidates, int droop) {
+void assign_mandates(int votes_per_candidate[POLITICS], int mandates_given, int candidates, int droop) {
 
     int extra_votes = 0; // droop and votes amount per candidate ratio (+/-)
     int redundant_candidates = candidates - mandates_given; // not all politics will be elected
@@ -329,9 +293,6 @@ void assign_mandates(int votes_per_candidate[RIIGIKOGU_LIIKMED], int mandates_gi
     }
 }
 
-/**
- * Greet user with a message and program rules
- */
 void greeting() {
 
     printf("\n\tWelcome to STV voting system!\n");
@@ -343,12 +304,6 @@ void greeting() {
     printf("Enjoy :)\n\n");
 }
 
-/**
- * Find duplicates inside a string (enhanced version of strchr() of <string.h> library)
- * @param array string
- * @param size size of string
- * @return [0]: if duplicates were found, [1]: if no duplicates were found
- */
 int find_duplicates_in_string(const char *array, int size) {
 
     for (int j = 0; j < size; ++j) {
@@ -363,13 +318,6 @@ int find_duplicates_in_string(const char *array, int size) {
     return 1;
 }
 
-/**
- * Search a character from one string inside another
- * @param search_from string to find from
- * @param sample string that will serve its element to look inside a "search_from" string
- * @param size size of "search_from" string
- * @return [int]: how many characters were found
- */
 int find_absence(const char *search_from, const char *sample, int size, int votes_per_ballot) {
     int found; // counter for similar symbols found inside two arrays
     int symbol;// any symbol that found inside "sample" array
@@ -394,39 +342,20 @@ int find_absence(const char *search_from, const char *sample, int size, int vote
     return valid;
 }
 
-/**
- * Init array of symbols
- * @param array char array
- * @param size size of char array
- * @param symbol symbol ASCII to use as an array initializer
- */
 void init_char_array(char *array, int size, int symbol) {
     for (int i = 0; i < size; ++i) {
         array[i] = (char) symbol;
     }
 }
 
-/**
- *
- * @param array_2D char array 2D
- * @param size size of char array_2D
- * @param symbol symbol ASCII to use as an array_2D initializer
- */
-void init_2d_char_array(char array_2D[ELANIKE_ARV][RIIGIKOGU_LIIKMED * 3], int size, int symbol) {
-    for (int i = 0; i < ELANIKE_ARV; ++i) {
+void init_2d_char_array(char array_2D[CITIZENS][POLITICS * 3], int size, int symbol) {
+    for (int i = 0; i < CITIZENS; ++i) {
         for (int j = 0; j < size; ++j) {
             array_2D[i][j] = (char) symbol;
         }
     }
 }
 
-/**
- * Fancy output into terminal as summary of STV voting
- * @param total_candidates total amount of candidates available
- * @param available_mandates how many mandates are given
- * @param votes_per_candidate array of votes per candidate
- * @param voting_results_candidates_hierarchy hierarchy of voting (result)
- */
 void print_fancy(int total_candidates, int available_mandates, const int *votes_per_candidate,
                  const int *votes_per_candidate_final,
                  const int *score_per_vote, char *voting_results_candidates_hierarchy, int droop) {
