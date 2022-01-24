@@ -31,7 +31,7 @@ int main() {
                                  total_ballots, total_candidates);
 
     /************************ Save initial values of votes, but use copied array to future process
-     * this is needed, when you wish to see not only final result of votes, but also raw ones ************************/
+     * this is needed, when you wish to see not only final result of votes, but also raw one ************************/
     copy_int_array(votes_per_candidate, votes_per_candidate_before_droop, total_candidates);
 
     /************************ Parse two tables (result of "create_vote_tables_sort_desc"), then based on Droop quota

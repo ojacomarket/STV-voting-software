@@ -10,7 +10,7 @@ int parse_data_from_console(char buffer[CITIZENS][POLITICS * 3], int *total_cand
     while (*total_candidates < 1) { // ask for candidates input, until at least is submitted
         printf("\n[###....... 30%] input your candidates: ");
         fgets(buffer[0], (POLITICS * 3), stdin);
-        *total_candidates = check_data_validity(buffer[0], (POLITICS * 3));
+        *total_candidates = check_data_validity(buffer[0], (POLITICS * 3), -1);
     }
     printf("\n[OK]\n");
 
@@ -34,13 +34,13 @@ int parse_data_from_console(char buffer[CITIZENS][POLITICS * 3], int *total_cand
             break;
         printf("\n[#########. 90%] input your votes (to exit press 'Enter' on a new line): ");
         fgets(buffer[votes_buffer_index], (POLITICS * 3), stdin);
-        int vote = check_data_validity(buffer[votes_buffer_index], (POLITICS * 3));
+        int vote = check_data_validity(buffer[votes_buffer_index], (POLITICS * 3), *total_votes);
         if (!find_absence(buffer[0], buffer[votes_buffer_index], *total_candidates, vote) && vote > -1) {
             printf("\n[ERROR] unregistered candidate...\n");
             init_char_array(buffer[votes_buffer_index], POLITICS * 3, 63);
             continue;
         }
-        if (!vote) {// invalid vote ? Continue to ask
+        if (!vote || vote == -2) {// invalid vote ? Continue to ask
             init_char_array(buffer[votes_buffer_index], POLITICS * 3, 63);
             continue;
         } else if (vote == -1) // enter is pressed and data is correct ? Exit loop of asking
@@ -55,7 +55,7 @@ int parse_data_from_console(char buffer[CITIZENS][POLITICS * 3], int *total_cand
     return (*total_votes / ((*total_candidates) + 1)) + 1; // droop quota equation
 }
 
-int check_data_validity(const char *array, int size) {
+int check_data_validity(const char *array, int size, int votes_given) {
 
     int total_candidates = 0; // counter for politicans to be voted for
     int valid_element = 0; // counter to track valid string element
@@ -94,13 +94,13 @@ int check_data_validity(const char *array, int size) {
                 }
             } else if (array[i] == 10) { // if enter is met
                 if (total_candidates < 1) {
+                    if (!votes_given) {
+                        printf("\n[ERROR] no data was input...\n");
+                        return -2;
+                    }
                     printf("\n[ERROR] no data was input...\n");
                     return -1;
                 }
-                /* if (!find_duplicates_in_string(array, insertions)) {
-                     printf("\n[ERROR] no duplicate candidates allowed...\n");
-                     return 0;
-                 }*/
                 break;
             }
         } else {

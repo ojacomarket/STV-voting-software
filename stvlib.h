@@ -31,9 +31,10 @@
 * Check string to be applicable for STV voting system
 * @param array [char[]]: element from a buffer (stored as a sequence of ASCII symbols)
 * @param size [int]: how many ASCII symbols are found inside "array" sequence
+* @param votes_given [int]: how many votes have been already made
 * @return [-1]: if no input (Enter), [0]: if data is invalid, [1]: if data is valid
 */
-int check_data_validity(const char *buffer, int size);
+int check_data_validity(const char *buffer, int size, int votes_given);
 
 /**
  * Create two tables: one that will store how many people have chosen each candidate and another - points for each choice
