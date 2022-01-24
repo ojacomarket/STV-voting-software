@@ -35,4 +35,5 @@ void init_2d_char_array(char array_2D[ELANIKE_ARV][RIIGIKOGU_LIIKMED * 3], int s
 void init_char_array(char *array, int size, int symbol);
 
 void print_fancy(int total_candidates, int available_mandates, const int *votes_per_candidate,
-                 char *voting_results_candidates_hierarchy, int droop);
+                 const int *votes_per_candidate_final,
+                 const int *score_per_vote, char *voting_results_candidates_hierarchy, int droop);

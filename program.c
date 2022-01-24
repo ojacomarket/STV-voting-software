@@ -33,27 +33,8 @@ int main() {
      * "score_per_vote" and "votes_per_candidate" ************************/
     create_vote_tables(buffer, votes_per_candidate, score_per_vote, total_ballots, total_candidates);
 
-    for (int i = 0; i < total_candidates; i++) {
-        printf("Value of votes is %d\n", votes_per_candidate[i]);
-    }
-    for (int i = 0; i < total_candidates; i++) {
-        printf("Power of votes is %d\n", score_per_vote[i]);
-    }
-    printf("\n\n");
-
     /************************ Sort two tables (result of "create_vote_tables") in ascending order ************************/
     parallel_sort(voting_results_candidates_hierarchy, votes_per_candidate, score_per_vote, total_candidates);
-
-    for (int i = 0; i < total_candidates; ++i) {
-        printf("\nCandidates after fileting::: %c\n", voting_results_candidates_hierarchy[i * 3]);
-    }
-    printf("\n\n\t\t\tSORTED ARRAYS\n\n");
-    for (int i = 0; i < total_candidates; i++) {
-        printf("Value of votes is %d\n", votes_per_candidate[i]);
-    }
-    for (int i = 0; i < total_candidates; i++) {
-        printf("Power of votes is %d\n", score_per_vote[i]);
-    }
 
     /************************ Save initial values of votes, but use copied array to future process ************************/
     copy_int_array(votes_per_candidate, votes_per_candidate_before_droop, total_candidates);
@@ -63,7 +44,8 @@ int main() {
     assign_mandates(votes_per_candidate, available_mandates, total_candidates, droop_quota);
 
     /************************ Print to terminal results of voting in a fancy way ************************/
-    print_fancy(total_candidates, available_mandates, votes_per_candidate_before_droop,
+    print_fancy(total_candidates, available_mandates, votes_per_candidate_before_droop, votes_per_candidate,
+                score_per_vote,
                 voting_results_candidates_hierarchy, droop_quota);
 
     return 1;

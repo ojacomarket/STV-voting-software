@@ -410,11 +410,22 @@ void init_2d_char_array(char array_2D[ELANIKE_ARV][RIIGIKOGU_LIIKMED * 3], int s
  * @param voting_results_candidates_hierarchy hierarchy of voting (result)
  */
 void print_fancy(int total_candidates, int available_mandates, const int *votes_per_candidate,
-                 char *voting_results_candidates_hierarchy, int droop) {
+                 const int *votes_per_candidate_final,
+                 const int *score_per_vote, char *voting_results_candidates_hierarchy, int droop) {
 
     printf("\n\n\n");
-    printf("\n\n\t\t\tVOTING RESULTS\n\n");
+    printf("\n\n[########## 100%]\tRAW VOTING RESULTS\n\n\n");
 
+    for (int i = 0; i < total_candidates; i++) {
+
+        printf("Candidate %c: ", voting_results_candidates_hierarchy[i * 3]);
+        for (int j = 0; j < votes_per_candidate[i]; ++j) {
+            printf("X");
+        }
+        printf("\t\t\t(Total score: %d)", score_per_vote[i]);
+        printf("\n\n");
+    }
+    printf("\n\n\t\t\tFINAL VOTING RESULTS\n\n");
     printf("\n\tS u m m a r y:\n\n");
     printf("\t(Droop quota): ");
     for (int i = 0; i < droop; ++i) {
@@ -422,10 +433,11 @@ void print_fancy(int total_candidates, int available_mandates, const int *votes_
     }
 
     printf("\n\n\t(Available mandates): %d\n\n\n", available_mandates);
+
     for (int i = 0; i < total_candidates; i++) {
 
         printf("Candidate %c: ", voting_results_candidates_hierarchy[i * 3]);
-        for (int j = 0; j < votes_per_candidate[i]; ++j) {
+        for (int j = 0; j < (available_mandates > i ? votes_per_candidate_final[i] : votes_per_candidate[i]); ++j) {
             printf("X");
         }
         if (available_mandates > i) {
