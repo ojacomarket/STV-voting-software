@@ -46,3 +46,4 @@ gcc -o run.exe program.o utilities.o declarations.h
 </br>
 
 - [x] ***Usage of unstandartizied variable data types (int, char, etc). Each compiler can interpret them in a slightly different way***
+
